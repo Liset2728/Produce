@@ -148,22 +148,26 @@ st.markdown("---")
 # 5. FILTRO POR INSTRUMENTO
 # ============================================================
 st.markdown("### 🔍 Detalle por Instrumento")
-
+ 
 instrumentos = sorted(df_filtrado[col_instrumento].dropna().unique().tolist())
 instrumentos.insert(0, 'Todos')
-
+ 
 seleccion = st.selectbox("Instrumento:", instrumentos)
-
+ 
 if seleccion == 'Todos':
     data = df_filtrado
 else:
     data = df_filtrado[df_filtrado[col_instrumento] == seleccion]
-
+ 
 cantidad_indicadores = data['Indicador mod'].dropna().shape[0]
 avance_prom_filtrado = data['pct_cumplimiento'].mean()
-
-col_tarjeta, col_gauge = st.columns([1, 2])
-
+responsables = sorted(
+    data['Responsable de realizar el seguimiento y evaluacion de indicadores'].dropna().unique().tolist()
+)
+texto_responsable = ", ".join(responsables) if responsables else "Sin dato"
+ 
+col_tarjeta, col_responsable, col_gauge = st.columns([1, 1, 2])
+ 
 with col_tarjeta:
     st.markdown(f"""
     <div style="background-color:#2c3e50; color:white; padding:20px; border-radius:12px;
@@ -174,7 +178,18 @@ with col_tarjeta:
         <div style="font-size:36px; font-weight:bold;">{cantidad_indicadores}</div>
     </div>
     """, unsafe_allow_html=True)
-
+ 
+with col_responsable:
+    st.markdown(f"""
+    <div style="background-color:#2c3e50; color:white; padding:20px; border-radius:12px;
+                height:220px; text-align:center; font-family:Arial;
+                box-shadow: 2px 2px 8px rgba(0,0,0,0.2); display:flex; flex-direction:column;
+                justify-content:center; overflow:hidden;">
+        <div style="font-size:14px; opacity:0.8;">Responsable de realizar el seguimiento y evaluación de indicadores</div>
+        <div style="font-size:16px; font-weight:bold; margin-top:8px;">{texto_responsable}</div>
+    </div>
+    """, unsafe_allow_html=True)
+ 
 with col_gauge:
     if pd.isna(avance_prom_filtrado):
         st.info("Sin datos de avance disponibles para este instrumento.")
@@ -183,6 +198,7 @@ with col_gauge:
             mode="number+gauge",
             value=avance_prom_filtrado,
             title={"text": "% Avance Promedio"},
+            number={'font': {'size': 36}},
             gauge={
                 'axis': {'range': [0, 100]},
                 'bar': {'color': "#2c3e50"},
@@ -200,9 +216,9 @@ with col_gauge:
         ))
         fig_gauge.update_layout(height=220, margin=dict(t=40, b=10, l=20, r=20))
         st.plotly_chart(fig_gauge, use_container_width=True)
-
+ 
 st.markdown("---")
-
+ 
 # ============================================================
 # 6. TABLA DE INDICADORES
 # ============================================================
