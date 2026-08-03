@@ -227,7 +227,7 @@ st.markdown("---")
 # 6. TABLA DE INDICADORES
 # ============================================================
 st.markdown("### 📋 Tabla de Indicadores")
-
+ 
 tabla = data[[
     'Entidad que reporta',
     'Indicador mod',
@@ -239,8 +239,35 @@ tabla = data[[
     'Avance acum mod': 'Avance',
     'pct_cumplimiento': '% Avance'
 })
-st.dataframe(tabla, use_container_width=True)
-
+ 
+columnas_centradas = ['Meta global', 'Avance', '% Avance']
+ 
+filas_html = ""
+for _, fila in tabla.iterrows():
+    filas_html += "<tr>"
+    for col in tabla.columns:
+        align = "center" if col in columnas_centradas else "left"
+        valor = fila[col]
+        if pd.isna(valor):
+            valor = ""
+        elif isinstance(valor, float):
+            valor = f"{valor:.2f}"
+        filas_html += f"<td style='text-align:{align}; padding:8px; border-bottom:1px solid #eee;'>{valor}</td>"
+    filas_html += "</tr>"
+ 
+encabezado_html = "".join([
+    f"<th style='text-align:{'center' if col in columnas_centradas else 'left'}; padding:8px; background-color:#2c3e50; color:white;'>{col}</th>"
+    for col in tabla.columns
+])
+ 
+st.markdown(f"""
+<div style="overflow-x:auto;">
+<table style="width:100%; border-collapse:collapse; font-family:Arial; font-size:13px;">
+    <thead><tr>{encabezado_html}</tr></thead>
+    <tbody>{filas_html}</tbody>
+</table>
+</div>
+""", unsafe_allow_html=True)
 # ============================================================
 # 7. DESCARGAR BASE ACTUALIZADA
 # ============================================================
