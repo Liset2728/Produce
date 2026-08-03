@@ -185,7 +185,7 @@ with col_responsable:
                 height:220px; text-align:center; font-family:Arial;
                 box-shadow: 2px 2px 8px rgba(0,0,0,0.2); display:flex; flex-direction:column;
                 justify-content:center; overflow:hidden;">
-        <div style="font-size:14px; opacity:0.8;">Responsable de realizar el seguimiento y evaluación de indicadores</div>
+        <div style="font-size:14px; opacity:0.8;">Responsable del seguimiento</div>
         <div style="font-size:16px; font-weight:bold; margin-top:8px;">{texto_responsable}</div>
     </div>
     """, unsafe_allow_html=True)
