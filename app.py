@@ -125,6 +125,19 @@ fig_barras.add_annotation(
 fig_barras.update_layout(margin=dict(b=100), height=400)
 st.plotly_chart(fig_barras, use_container_width=True)
 
+# --- Nota: instrumentos sin indicador/meta definida ---
+instrumentos_sin_indicador = sorted(
+    df[df['Indicador med'] == 'No'][col_instrumento].dropna().unique().tolist()
+)
+ 
+st.markdown(
+    "**Nota:** Los siguientes instrumentos de gestión presentan acciones a seguir. "
+    "Sin embargo, los indicadores y/o metas no se encuentran definidas."
+)
+ 
+for nombre in instrumentos_sin_indicador:
+    st.markdown(f"- {nombre}")
+    
 st.markdown("---")
 
 # ============================================================
