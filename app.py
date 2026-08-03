@@ -181,7 +181,7 @@ with col_gauge:
                 }
             }
         ))
-        fig_gauge.update_layout(height=280, margin=dict(t=40, b=10, l=20, r=20))
+        fig_gauge.update_layout(height=220, margin=dict(t=40, b=10, l=20, r=20))
         st.plotly_chart(fig_gauge, use_container_width=True)
 
 st.markdown("---")
