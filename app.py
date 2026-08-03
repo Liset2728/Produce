@@ -161,10 +161,14 @@ else:
  
 cantidad_indicadores = data['Indicador mod'].dropna().shape[0]
 avance_prom_filtrado = data['pct_cumplimiento'].mean()
-responsables = sorted(
-    data['Responsable de realizar el seguimiento y evaluacion de indicadores'].dropna().unique().tolist()
-)
-texto_responsable = ", ".join(responsables) if responsables else "Sin dato"
+ 
+if seleccion == 'Todos':
+    texto_responsable = "-"
+else:
+    responsables = sorted(
+        data['Responsable de realizar el seguimiento y evaluacion de indicadores'].dropna().unique().tolist()
+    )
+    texto_responsable = ", ".join(responsables) if responsables else "Sin dato"
  
 col_tarjeta, col_responsable, col_gauge = st.columns([1, 1, 2])
  
