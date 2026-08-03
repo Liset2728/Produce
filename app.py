@@ -15,26 +15,26 @@ st.set_page_config(
 # ============================================================
 # AUTENTICACIÓN CON CONTRASEÑA
 # ============================================================
-def verificar_password():
-    def password_ingresada():
-        if st.session_state["password"] == st.secrets["password"]:
-            st.session_state["password_correcta"] = True
-            del st.session_state["password"]
-        else:
-            st.session_state["password_correcta"] = False
+#def verificar_password():
+#    def password_ingresada():
+#        if st.session_state["password"] == st.secrets["password"]:
+#            st.session_state["password_correcta"] = True
+#            del st.session_state["password"]
+#        else:
+#            st.session_state["password_correcta"] = False
  
-    if "password_correcta" not in st.session_state:
-        st.text_input("Contraseña", type="password", on_change=password_ingresada, key="password")
-        return False
-    elif not st.session_state["password_correcta"]:
-        st.text_input("Contraseña", type="password", on_change=password_ingresada, key="password")
-        st.error("😕 Contraseña incorrecta")
-        return False
-    else:
-        return True
+#    if "password_correcta" not in st.session_state:
+#        st.text_input("Contraseña", type="password", on_change=password_ingresada, key="password")
+#        return False
+#    elif not st.session_state["password_correcta"]:
+#        st.text_input("Contraseña", type="password", on_change=password_ingresada, key="password")
+#        st.error("😕 Contraseña incorrecta")
+#        return False
+#    else:
+#        return True
  
-if not verificar_password():
-    st.stop()
+#if not verificar_password():
+#    st.stop()
  
 # ============================================================
 # ENCABEZADO
@@ -271,12 +271,12 @@ st.markdown(f"""
 # ============================================================
 # 7. DESCARGAR BASE ACTUALIZADA
 # ============================================================
-import io
-buffer = io.BytesIO()
-df.to_excel(buffer, index=False)
-st.download_button(
-    label="⬇️ Descargar Excel actualizado",
-    data=buffer.getvalue(),
-    file_name="Instrumentos_bi_actualizado.xlsx",
-    mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-)
+#import io
+#buffer = io.BytesIO()
+#df.to_excel(buffer, index=False)
+#st.download_button(
+#    label="⬇️ Descargar Excel actualizado",
+#    data=buffer.getvalue(),
+#    file_name="Instrumentos_bi_actualizado.xlsx",
+#    mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+#)
