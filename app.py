@@ -133,9 +133,9 @@ instrumentos_sin_indicador = sorted(
 lista_html = "".join([f"<li>{nombre}</li>" for nombre in instrumentos_sin_indicador])
  
 st.markdown(f"""
-<div style="background-color:#e8e8e8; border-radius:12px; padding:16px 20px; font-family:Arial; font-size:13px; color:#333;">
+<div style="background-color:#e8e8e8; border-radius:12px; padding:16px 20px; font-family:Arial; font-size:11px; color:#333;">
     <b>Nota:</b> Los siguientes instrumentos de gestión presentan acciones a seguir.
-    Sin embargo, los indicadores y/o metas no se encuentran definidas.
+    Sin embargo, los indicadores y/o metas no se encuentran definidas o en su defecto los indicadores no han sido reportados.
     <ul style="margin:8px 0 0 0; padding-left:20px;">
         {lista_html}
     </ul>
