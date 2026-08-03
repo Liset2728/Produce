@@ -202,7 +202,7 @@ with col_gauge:
             mode="number+gauge",
             value=avance_prom_filtrado,
             title={"text": "% Avance Promedio"},
-            number={'font': {'size': 36}},
+            number={'font': {'size': 50}},
             gauge={
                 'axis': {'range': [0, 100]},
                 'bar': {'color': "#2c3e50"},
