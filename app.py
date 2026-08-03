@@ -26,13 +26,10 @@ st.markdown("""
 # ============================================================
 # 1. CARGA DE DATOS
 # ============================================================
-archivo = st.sidebar.file_uploader("Sube tu archivo Excel", type=["xlsx"])
+# El archivo debe estar en el mismo repositorio de GitHub que app.py
+NOMBRE_ARCHIVO = "Instrumentos_bi.xlsx"  # ajusta si el nombre real es distinto
 
-if archivo is None:
-    st.info("⬅️ Sube tu archivo Excel desde el panel lateral para comenzar.")
-    st.stop()
-
-df = pd.read_excel(archivo, sheet_name="BASE")
+df = pd.read_excel(NOMBRE_ARCHIVO, sheet_name="BASE")
 
 col_instrumento = 'Nombre del Instrumento'  # ajusta el nombre exacto si difiere
 
