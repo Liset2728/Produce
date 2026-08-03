@@ -72,8 +72,8 @@ df_filtrado = df[df['Indicador med'] == 'Si']
 # ============================================================
 # 3. KPIs GENERALES
 # ============================================================
-total_general = df_filtrado[col_instrumento].nunique()
-indicadores_general = df_filtrado['Indicador mod'].dropna().shape[0]
+total_general = df[col_instrumento].nunique()
+indicadores_general = df['Indicador mod'].dropna().shape[0]
 indicadores_medibles = (df_filtrado['Indicador med'] == 'Si').sum()
 avance_general = df_filtrado['pct_cumplimiento'].mean()
 
