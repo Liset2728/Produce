@@ -82,6 +82,15 @@ st.markdown(f"""
 }}
 .kpi-mini-label {{ font-size:11px; text-transform:uppercase; letter-spacing:.05em; color:{INK_FAINT}; font-weight:700; font-family:Arial; }}
 .kpi-mini-value {{ font-size:15px; font-weight:700; margin-top:4px; color:{DARK}; font-family:Arial; }}
+.kpi-card {{
+    background:#fff; border:1px solid {LINE}; border-radius:14px; padding:18px 20px;
+    border-top:3px solid {DARK}; box-shadow: 1px 1px 2px rgba(12,28,48,.04), 0 6px 20px rgba(12,28,48,.06);
+}}
+.kpi-card.teal {{ border-top-color:{TEAL}; }}
+.kpi-card.amber {{ border-top-color:{SLATE}; }}
+.kpi-card .kpi-label {{ font-size:11.5px; text-transform:uppercase; letter-spacing:.06em; color:{INK_FAINT}; font-weight:700; font-family:Arial; }}
+.kpi-card .kpi-value {{ font-size:30px; font-weight:800; margin-top:6px; color:{DARK}; font-family:Arial; }}
+.kpi-card .kpi-sub {{ font-size:12px; color:#5b6b82; margin-top:4px; font-family:Arial; }}
 </style>
 """, unsafe_allow_html=True)
 
@@ -243,13 +252,12 @@ def avg_pct(items: pd.DataFrame):
     return float(vals.mean()) if len(vals) else None
 
 
-def tarjeta_kpi(titulo, valor, color=DARK):
+def tarjeta_kpi(titulo, valor, subtitulo="", clase=""):
     st.markdown(f"""
-    <div style="background-color:{color}; color:white; padding:18px; border-radius:12px;
-                text-align:center; font-family:Arial;
-                box-shadow: 2px 2px 8px rgba(0,0,0,0.2);">
-        <div style="font-size:13px; opacity:0.8;">{titulo}</div>
-        <div style="font-size:32px; font-weight:bold;">{valor}</div>
+    <div class="kpi-card {clase}">
+        <div class="kpi-label">{titulo}</div>
+        <div class="kpi-value">{valor}</div>
+        <div class="kpi-sub">{subtitulo}</div>
     </div>
     """, unsafe_allow_html=True)
 
@@ -280,12 +288,12 @@ def gauge_figure(value, height=220):
 # ============================================================
 # 2. KPIs GENERALES
 # ============================================================
-otal_general = DATA[col_instrumento].nunique()
+total_general = DATA[col_instrumento].nunique()
 indicadores_general = len(DATA)
 medibles_df = DATA[DATA["medible"]]
 indicadores_medibles = len(medibles_df)
 avance_general = avg_pct(DATA)
- 
+
 k1, k2, k3, k4 = st.columns(4)
 with k1:
     tarjeta_kpi("Total Instrumentos", total_general,
@@ -299,9 +307,9 @@ with k3:
 with k4:
     tarjeta_kpi("% Avance General", f"{avance_general:.1f}%" if avance_general is not None else "—",
                 "promedio de avance sobre indicadores medibles (tope 100%)", clase="amber")
- 
+
 st.markdown("<br>", unsafe_allow_html=True)
- 
+
 tab_resumen, tab_subtotales = st.tabs(["📊 Resumen general", "🗂️ Subtotales por instrumento y dependencia"])
 
 # ============================================================
@@ -699,4 +707,4 @@ st.caption("Tablero generado a partir de la base de datos del repositorio.")
 #    data=buffer.getvalue(),
 #    file_name="Instrumentos_bi_actualizado.xlsx",
 #    mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-#)#)
+#)
