@@ -72,18 +72,8 @@ st.markdown(f"""
     background:#e8e8e8; border-radius:12px; border-left:4px solid {AMBER};
     padding:14px 20px; font-family:Arial; font-size:12.5px; color:#333; line-height:1.55;
 }}
-.chip {{
-    display:inline-block; font-size:11.5px; font-weight:600; color:{DARK}; background:#eef3f8;
-    border:1px solid #d9e3ec; padding:4px 10px; border-radius:20px; margin:2px 4px 2px 0;
-}}
 .section-title {{ font-size:19px; font-weight:700; color:{DARK}; margin: 10px 0 2px; font-family:Arial; }}
 .section-hint {{ font-size:12.5px; color:{INK_FAINT}; margin-bottom:10px; font-family:Arial; }}
-.kpi-mini {{
-    background:#fff; border:1px solid {LINE}; border-radius:12px; padding:14px 16px;
-    box-shadow: 1px 1px 6px rgba(0,0,0,0.06);
-}}
-.kpi-mini-label {{ font-size:11px; text-transform:uppercase; letter-spacing:.05em; color:{INK_FAINT}; font-weight:700; font-family:Arial; }}
-.kpi-mini-value {{ font-size:15px; font-weight:700; margin-top:4px; color:{DARK}; font-family:Arial; }}
 .kpi-card {{
     background:#fff; border:1px solid {LINE}; border-radius:14px; padding:18px 20px;
     border-top:3px solid {DARK}; box-shadow: 1px 1px 2px rgba(12,28,48,.04), 0 6px 20px rgba(12,28,48,.06);
@@ -133,17 +123,12 @@ div[data-testid="stVerticalBlockBorderWrapper"] {{
 NOMBRE_ARCHIVO = "Instrumentos bi.xlsx"  # nombre exacto tal como está en el repositorio
 
 COLMAP = {
-    "cod": "cod",
     "Entidad que reporta": "entidad",
     "Tipo Instrumento": "tipo",
     "Nombre del Instrumento": "instrumento",
     "Norma aprobatoria": "norma",
     "Objetivo Estrategico": "objetivo",
-    "Linea de accion": "linea",
-    "Accion Estrategica / Iniciativa": "accion",
     "Responsable de realizar el seguimiento y evaluacion de indicadores": "responsable_seg",
-    "Responsable del indicador": "responsable_ind",
-    "Observacion": "observacion",
 }
 
 
@@ -186,12 +171,9 @@ def load_data(path) -> pd.DataFrame:
     )
     df["pct_capped"] = df["pct"].apply(lambda v: min(v, 100) if v is not None else None)
 
-    for col in ["entidad", "tipo", "instrumento", "norma", "objetivo", "responsable_ind", "indicador"]:
+    for col in ["entidad", "tipo", "instrumento", "norma", "objetivo", "indicador"]:
         df[col] = df[col].fillna("").astype(str).str.strip()
 
-    df["objetivo_norm"] = df["objetivo"].apply(
-        lambda v: v if v not in ("", "-") else "Sin objetivo estratégico asociado"
-    )
     return df
 
 
@@ -339,27 +321,27 @@ with c1:
     st.plotly_chart(fig_barras, use_container_width=True)
 
 with c2:
-    with st.container(border=True):
-        st.markdown(
-            '<h3 style="margin:0 0 14px; font-size:14px; color:#5b6b82; '
-            'font-weight:600; font-family:Arial;">Indicadores por estado de avance</h3>',
-            unsafe_allow_html=True,
-        )
-        buckets = {k: 0 for k in STATUS_COLOR}
-        for p in medibles_df["pct"]:
-            s = status_of(p)
-            if s:
-                buckets[s] += 1
-        fig_donut = go.Figure(go.Pie(
-            labels=[f"{STATUS_LABEL[k]} · {buckets[k]}" for k in buckets],
-            values=list(buckets.values()),
-            marker=dict(colors=[STATUS_COLOR[k] for k in buckets]),
-            hole=0.62,
-            textinfo='none',
-        ))
-        fig_donut.update_layout(height=380, margin=dict(l=10, r=10, t=10, b=10), showlegend=True,
-                                 legend=dict(orientation="h", yanchor="bottom", y=-0.3))
-        st.plotly_chart(fig_donut, use_container_width=True)
+    st.markdown(
+        '<h3 style="margin:0 0 14px; font-size:14px; color:#5b6b82; '
+        'font-weight:600; font-family:Arial;">Indicadores por estado de avance</h3>',
+        unsafe_allow_html=True,
+    )
+    buckets = {k: 0 for k in STATUS_COLOR}
+    for p in medibles_df["pct"]:
+        s = status_of(p)
+        if s:
+            buckets[s] += 1
+    fig_donut = go.Figure(go.Pie(
+        labels=[f"{STATUS_LABEL[k]} · {buckets[k]}" for k in buckets],
+        values=list(buckets.values()),
+        marker=dict(colors=[STATUS_COLOR[k] for k in buckets]),
+        hole=0.62,
+        textinfo='none',
+    ))
+    fig_donut.update_layout(height=380, margin=dict(l=10, r=10, t=10, b=10), showlegend=True,
+                             legend=dict(orientation="h", yanchor="bottom", y=-0.3),
+                             paper_bgcolor='white', plot_bgcolor='white')
+    st.plotly_chart(fig_donut, use_container_width=True)
 
 # --- Nota: instrumentos sin indicador/meta definida ---
 instrumentos_sin_indicador = sorted(
