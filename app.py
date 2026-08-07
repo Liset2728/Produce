@@ -332,7 +332,7 @@ with c2:
         values=list(buckets.values()),
         marker=dict(colors=[STATUS_COLOR[k] for k in buckets]),
         hole=0.62,
-        pull=0.05,
+        pull=0.03,
         textinfo='none',
     ))
     fig_donut.update_layout(
