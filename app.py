@@ -316,7 +316,6 @@ with c1:
         )
         conteo_entidad = medibles_df["entidad"].value_counts().reset_index()
         conteo_entidad.columns = ["entidad", "count"]
-        total_indicadores_grafico = len(medibles_df)
 
         BAR_SEQUENCE = ['#122a44', '#1a3a5c', '#254c73', '#3f8fc7', '#12876f', '#e2963a', '#d24b4b']
 
@@ -326,7 +325,7 @@ with c1:
                              color_discrete_sequence=BAR_SEQUENCE)
         fig_barras.update_xaxes(categoryorder='total descending', title=None)
         fig_barras.update_yaxes(title=None)
-        
+        fig_barras.update_traces(marker_cornerradius=8)
         fig_barras.update_layout(margin=dict(t=10, b=100), height=380, showlegend=False)
         st.plotly_chart(fig_barras, use_container_width=True)
 
