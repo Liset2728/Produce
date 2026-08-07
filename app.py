@@ -326,7 +326,7 @@ with c1:
                              text='count', color='entidad',
                              color_discrete_sequence=BAR_SEQUENCE)
         fig_barras.update_xaxes(categoryorder='total descending')
-        )
+        
         fig_barras.update_layout(margin=dict(t=10, b=100), height=380, showlegend=False)
         st.plotly_chart(fig_barras, use_container_width=True)
 
