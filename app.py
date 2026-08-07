@@ -87,10 +87,18 @@ st.markdown(f"""
 # ============================================================
 # ENCABEZADO
 # ============================================================
-st.markdown("""
-<div style="background-color:#1a2634; padding:20px; border-radius:12px; margin-bottom:15px;">
-    <h1 style="color:white; font-family:Arial; margin:0;">📊 Tablero de Control - Instrumentos PRODUCE</h1>
-    <p style="color:#bdc3c7; font-family:Arial; margin:5px 0 0 0;">Seguimiento de indicadores por instrumento</p>
+st.markdown(f"""
+<div class="topbar">
+  <div class="topbar-inner">
+    <div class="eyebrow"><span class="dot"></span>PRODUCE · Seguimiento de indicadores</div>
+    <h1>📊 Tablero de Control — Instrumentos PRODUCE</h1>
+    <p>Procesado directamente desde el Excel (hoja BASE), sobre {DATA[col_instrumento].nunique()} instrumentos
+    de gestión y {len(DATA)} indicadores asociados.</p>
+    <div class="topbar-meta">
+      <div>Fuente: <b>{NOMBRE_ARCHIVO}</b></div>
+      <div>Entidades responsables: <b>{len(ENTIDADES)}</b></div>
+    </div>
+  </div>
 </div>
 """, unsafe_allow_html=True)
 
