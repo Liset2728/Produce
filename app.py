@@ -322,11 +322,15 @@ with c1:
 
         fig_barras = px.bar(conteo_entidad,
                              x='entidad', y='count',
-                             #labels={'count': 'Cantidad', 'entidad': 'Área Responsable'},
                              text='count', color='entidad',
                              color_discrete_sequence=BAR_SEQUENCE)
-        fig_barras.update_xaxes(categoryorder='total descending')
-        
+        fig_barras.update_xaxes(categoryorder='total descending', title=None)
+        fig_barras.update_yaxes(title=None)
+        fig_barras.add_annotation(
+            text=f"Total: {total_indicadores_grafico}",
+            xref="paper", yref="paper", x=1, y=-0.15, showarrow=False,
+            font=dict(size=13, color="gray"), align="right"
+        )
         fig_barras.update_layout(margin=dict(t=10, b=100), height=380, showlegend=False)
         st.plotly_chart(fig_barras, use_container_width=True)
 
