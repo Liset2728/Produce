@@ -314,7 +314,7 @@ with c1:
     fig_barras.update_traces(marker_cornerradius=8)
     fig_barras.update_layout(
         title_font=dict(size=14, color='#5b6b82', family='Arial'),
-        title_x=0.5, margin=dict(t=50, b=100, l=10, r=10), height=380, showlegend=False,
+        title_x=0.25, margin=dict(t=50, b=100, l=10, r=10), height=380, showlegend=False,
         paper_bgcolor='white', plot_bgcolor='white',
     )
     st.plotly_chart(fig_barras, use_container_width=True)
@@ -336,7 +336,7 @@ with c2:
     fig_donut.update_layout(
         title='Indicadores por estado de avance',
         title_font=dict(size=14, color='#5b6b82', family='Arial'),
-        title_x=0.5,
+        title_x=0.25,
         height=380, margin=dict(l=10, r=10, t=50, b=10), showlegend=True,
         legend=dict(orientation="h", yanchor="bottom", y=-0.3),
         paper_bgcolor='white', plot_bgcolor='white')
