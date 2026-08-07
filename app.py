@@ -93,6 +93,12 @@ st.markdown(f"""
 .kpi-card .kpi-label {{ font-size:11.5px; text-transform:uppercase; letter-spacing:.06em; color:{INK_FAINT}; font-weight:700; font-family:Arial; }}
 .kpi-card .kpi-value {{ font-size:30px; font-weight:800; margin-top:6px; color:{DARK}; font-family:Arial; }}
 .kpi-card .kpi-sub {{ font-size:12px; color:#5b6b82; margin-top:4px; font-family:Arial; }}
+div[data-testid="stVerticalBlockBorderWrapper"] {{
+    border-radius:16px !important;
+    background-color:#fff !important;
+    padding:20px 22px !important;
+    box-shadow: 1px 1px 2px rgba(12,28,48,.04), 0 6px 20px rgba(12,28,48,.06);
+}}
 </style>
 """, unsafe_allow_html=True)
 
@@ -327,7 +333,7 @@ with c1:
         fig_barras.update_traces(marker_cornerradius=8)
         fig_barras.update_layout(
             title_font=dict(size=14, color='#5b6b82', family='Arial'),
-            title_x=0, margin=dict(t=50, b=100), height=380, showlegend=False,
+            title_x=0, margin=dict(t=50, b=100, l=10, r=10), height=380, showlegend=False,
             paper_bgcolor='white', plot_bgcolor='white',
         )
         st.plotly_chart(fig_barras, use_container_width=True)
