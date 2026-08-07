@@ -98,6 +98,7 @@ div[data-testid="stVerticalBlockBorderWrapper"] {{
     background-color:#fff !important;
     padding:20px 22px !important;
     box-shadow: 1px 1px 2px rgba(12,28,48,.04), 0 6px 20px rgba(12,28,48,.06);
+    overflow:hidden !important;
 }}
 </style>
 """, unsafe_allow_html=True)
@@ -333,8 +334,8 @@ with c1:
         fig_barras.update_traces(marker_cornerradius=8)
         fig_barras.update_layout(
             title_font=dict(size=14, color='#5b6b82', family='Arial'),
-            title_x=1, margin=dict(t=60, b=100, l=10, r=10), height=380, showlegend=False,
-            paper_bgcolor='white', plot_bgcolor='white',
+            title_x=0, margin=dict(t=50, b=100, l=10, r=10), height=380, showlegend=False,
+            paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)',
         )
         st.plotly_chart(fig_barras, use_container_width=True)
 
