@@ -1,4 +1,3 @@
-import re
 import pandas as pd
 import numpy as np
 import plotly.express as px
@@ -137,8 +136,6 @@ COLMAP = {
     "Observacion": "observacion",
 }
 
-INVALID_DEP = {"", "-", "no se encontro", "no encontrado"}
-
 
 def _try_float(x):
     try:
@@ -223,18 +220,6 @@ st.markdown(f"""
 # ============================================================
 # FUNCIONES AUXILIARES
 # ============================================================
-def split_dependencias(text: str):
-    if not text:
-        return []
-    parts = re.split(r"/|,|\sy\s", text, flags=re.IGNORECASE)
-    out = []
-    for p in parts:
-        p = p.strip()
-        if p and p.lower() not in INVALID_DEP:
-            out.append(p)
-    return out
-
-
 def status_of(pct):
     if pct is None or pd.isna(pct):
         return None
@@ -310,234 +295,237 @@ with k4:
 
 st.markdown("<br>", unsafe_allow_html=True)
 
-tab_resumen, = st.tabs(["📊 Resumen general"])
 
 # ============================================================
-# TAB 1 — RESUMEN GENERAL
+# RESUMEN GENERAL
 # ============================================================
-with tab_resumen:
 
-    # ---- 3. GRÁFICO DE BARRAS + DONA DE ESTADOS ----
-    c1, c2 = st.columns([1.35, 1])
-    with c1:
-        conteo_entidad = medibles_df["entidad"].value_counts().reset_index()
-        conteo_entidad.columns = ["entidad", "count"]
-        total_indicadores_grafico = len(medibles_df)
+# ---- 3. GRÁFICO DE BARRAS + DONA DE ESTADOS ----
+st.markdown('<div class="section-title">Panorama general</div>', unsafe_allow_html=True)
+st.markdown(
+    '<div class="section-hint">Distribución de indicadores por entidad y por nivel de avance</div>',
+    unsafe_allow_html=True,
+)
+c1, c2 = st.columns([1.35, 1])
+with c1:
+    conteo_entidad = medibles_df["entidad"].value_counts().reset_index()
+    conteo_entidad.columns = ["entidad", "count"]
+    total_indicadores_grafico = len(medibles_df)
 
-        fig_barras = px.bar(conteo_entidad,
-                             x='entidad', y='count',
-                             title='Cantidad de Indicadores por Área Responsable',
-                             labels={'count': 'Cantidad', 'entidad': 'Área Responsable'},
-                             color='entidad', text='count')
-        fig_barras.add_annotation(
-            text=f"Total: {total_indicadores_grafico}",
-            xref="paper", yref="paper", x=1, y=-0.15, showarrow=False,
-            font=dict(size=13, color="gray"), align="right"
-        )
-        fig_barras.update_layout(margin=dict(b=100), height=400, showlegend=False)
-        st.plotly_chart(fig_barras, use_container_width=True)
-
-    with c2:
-        buckets = {k: 0 for k in STATUS_COLOR}
-        for p in medibles_df["pct"]:
-            s = status_of(p)
-            if s:
-                buckets[s] += 1
-        fig_donut = go.Figure(go.Pie(
-            labels=[STATUS_LABEL[k] for k in buckets],
-            values=list(buckets.values()),
-            marker=dict(colors=[STATUS_COLOR[k] for k in buckets]),
-            hole=0.62,
-        ))
-        fig_donut.update_layout(height=400, margin=dict(l=10, r=10, t=30, b=10),
-                                 title="Indicadores por estado de avance", showlegend=True,
-                                 legend=dict(orientation="h", yanchor="bottom", y=-0.3))
-        st.plotly_chart(fig_donut, use_container_width=True)
-
-    # --- Nota: instrumentos sin indicador/meta definida ---
-    instrumentos_sin_indicador = sorted(
-        name for name, g in DATA.groupby(col_instrumento) if not g["medible"].any() and name
+    fig_barras = px.bar(conteo_entidad,
+                         x='entidad', y='count',
+                         title='Cantidad de Indicadores por Área Responsable',
+                         labels={'count': 'Cantidad', 'entidad': 'Área Responsable'},
+                         color='entidad', text='count')
+    fig_barras.add_annotation(
+        text=f"Total: {total_indicadores_grafico}",
+        xref="paper", yref="paper", x=1, y=-0.15, showarrow=False,
+        font=dict(size=13, color="gray"), align="right"
     )
-    lista_html = "".join([f"<li>{nombre}</li>" for nombre in instrumentos_sin_indicador]) or "<li>Ninguno.</li>"
+    fig_barras.update_layout(margin=dict(b=100), height=400, showlegend=False)
+    st.plotly_chart(fig_barras, use_container_width=True)
+
+with c2:
+    buckets = {k: 0 for k in STATUS_COLOR}
+    for p in medibles_df["pct"]:
+        s = status_of(p)
+        if s:
+            buckets[s] += 1
+    fig_donut = go.Figure(go.Pie(
+        labels=[STATUS_LABEL[k] for k in buckets],
+        values=list(buckets.values()),
+        marker=dict(colors=[STATUS_COLOR[k] for k in buckets]),
+        hole=0.62,
+    ))
+    fig_donut.update_layout(height=400, margin=dict(l=10, r=10, t=30, b=10),
+                             title="Indicadores por estado de avance", showlegend=True,
+                             legend=dict(orientation="h", yanchor="bottom", y=-0.3))
+    st.plotly_chart(fig_donut, use_container_width=True)
+
+# --- Nota: instrumentos sin indicador/meta definida ---
+instrumentos_sin_indicador = sorted(
+    name for name, g in DATA.groupby(col_instrumento) if not g["medible"].any() and name
+)
+lista_html = "".join([f"<li>{nombre}</li>" for nombre in instrumentos_sin_indicador]) or "<li>Ninguno.</li>"
+st.markdown(f"""
+<div class="note-box">
+    <b>Nota:</b> Los siguientes instrumentos de gestión presentan acciones a seguir.
+    Sin embargo, los indicadores y/o metas no se encuentran definidas o en su defecto los indicadores no han sido reportados.
+    <ul style="margin:8px 0 0 0; padding-left:20px;">
+        {lista_html}
+    </ul>
+</div>
+""", unsafe_allow_html=True)
+
+st.markdown("---")
+
+# ---- 4. CRUCE NORMA x ENTIDAD ----
+st.markdown('<div class="section-title">🔗 Cumplimiento cruzado: Norma × Entidad</div>', unsafe_allow_html=True)
+st.markdown(
+    '<div class="section-hint">Elige un instrumento para ver qué entidades van cumpliendo, '
+    'o una entidad para ver qué instrumentos va cumpliendo</div>',
+    unsafe_allow_html=True,
+)
+cc1, cc2 = st.columns(2)
+
+instr_by_count = DATA[col_instrumento].value_counts().index.tolist()
+with cc1:
+    st.markdown("**Por instrumento / norma → avance por entidad**")
+    sel_instr = st.selectbox("Instrumento (norma)", instr_by_count, key="cross_instr")
+    rows = DATA[DATA[col_instrumento] == sel_instr]
+    norma_txt = rows["norma"].iloc[0] if len(rows) else "—"
+    by_ent = (
+        rows.groupby("entidad")
+        .apply(lambda g: pd.Series({"n": len(g), "pct": avg_pct(g)}))
+        .reset_index()
+        .sort_values("pct", ascending=True, na_position="first")
+    )
+    st.caption(f"Norma: **{norma_txt}** · Entidades involucradas: **{len(by_ent)}** · Indicadores: **{len(rows)}**")
+    colors = [STATUS_COLOR[status_of(p)] if pd.notna(p) else "#c9d2dd" for p in by_ent["pct"]]
+    fig_ci = go.Figure(go.Bar(
+        x=by_ent["pct"].fillna(0), y=by_ent["entidad"], orientation="h",
+        marker_color=colors,
+        text=[f"{p:.1f}%" if pd.notna(p) else "N/D" for p in by_ent["pct"]],
+        textposition="outside",
+    ))
+    fig_ci.update_layout(height=320, margin=dict(l=10, r=30, t=10, b=10), xaxis=dict(range=[0, 105]))
+    st.plotly_chart(fig_ci, use_container_width=True)
+
+ent_by_count = DATA["entidad"].value_counts().index.tolist()
+with cc2:
+    st.markdown("**Por entidad → avance por instrumento / norma**")
+    sel_ent = st.selectbox("Entidad responsable", ent_by_count, key="cross_ent")
+    rows2 = DATA[DATA["entidad"] == sel_ent]
+    by_instr = (
+        rows2.groupby(col_instrumento)
+        .apply(lambda g: pd.Series({"n": len(g), "pct": avg_pct(g)}))
+        .reset_index()
+        .sort_values("pct", ascending=True, na_position="first")
+    )
+    st.caption(f"Instrumentos que reporta: **{len(by_instr)}** · Indicadores: **{len(rows2)}**")
+    labels = [i if len(i) <= 40 else i[:40] + "…" for i in by_instr[col_instrumento]]
+    colors2 = [STATUS_COLOR[status_of(p)] if pd.notna(p) else "#c9d2dd" for p in by_instr["pct"]]
+    fig_ce = go.Figure(go.Bar(
+        x=by_instr["pct"].fillna(0), y=labels, orientation="h",
+        marker_color=colors2,
+        text=[f"{p:.1f}%" if pd.notna(p) else "N/D" for p in by_instr["pct"]],
+        textposition="outside",
+        hovertext=by_instr[col_instrumento],
+    ))
+    fig_ce.update_layout(height=320, margin=dict(l=10, r=30, t=10, b=10), xaxis=dict(range=[0, 105]))
+    st.plotly_chart(fig_ce, use_container_width=True)
+
+st.markdown("---")
+
+# ---- 5. MATRIZ CRUZADA ENTIDAD x TIPO ----
+st.markdown('<div class="section-title">🧮 Matriz cruzada: Entidad × Tipo de instrumento</div>', unsafe_allow_html=True)
+st.markdown(
+    '<div class="section-hint">N° de indicadores que reporta cada entidad, por tipo de instrumento de gestión</div>',
+    unsafe_allow_html=True,
+)
+matrix = pd.crosstab(DATA["entidad"], DATA["tipo"])
+matrix = matrix.reindex(index=ENTIDADES, columns=TIPOS, fill_value=0)
+matrix["Total"] = matrix.sum(axis=1)
+total_row = matrix.sum(axis=0)
+total_row.name = "Total"
+matrix_display = pd.concat([matrix, total_row.to_frame().T])
+
+fig_hm = px.imshow(
+    matrix.drop(columns="Total"),
+    text_auto=True,
+    color_continuous_scale=[[0, "#f7f9fb"], [1, TEAL]],
+    aspect="auto",
+)
+fig_hm.update_layout(height=280, margin=dict(l=10, r=10, t=10, b=10), coloraxis_showscale=False)
+st.plotly_chart(fig_hm, use_container_width=True)
+with st.expander("Ver tabla con totales"):
+    st.dataframe(matrix_display, use_container_width=True)
+
+st.markdown("---")
+
+# ============================================================
+# 6. FILTRO Y DETALLE POR INSTRUMENTO
+# ============================================================
+st.markdown('<div class="section-title">🔍 Detalle por Instrumento</div>', unsafe_allow_html=True)
+st.markdown('<div class="section-hint">Filtra para inspeccionar el avance de un recorte específico</div>',
+            unsafe_allow_html=True)
+
+f1, f2, f3, f4 = st.columns(4)
+f_ent = f1.selectbox("Entidad responsable", ["Todas"] + ENTIDADES, key="f_ent")
+f_ins = f2.selectbox("Instrumento", ["Todos"] + INSTRUMENTOS, key="f_ins")
+f_tip = f3.selectbox("Tipo de instrumento", ["Todos"] + TIPOS, key="f_tip")
+f_q = f4.text_input("Buscar indicador", placeholder="ej. economía circular, MYPE, digital…", key="f_q")
+
+data = medibles_df.copy()
+if f_ent != "Todas":
+    data = data[data["entidad"] == f_ent]
+if f_ins != "Todos":
+    data = data[data[col_instrumento] == f_ins]
+if f_tip != "Todos":
+    data = data[data["tipo"] == f_tip]
+if f_q:
+    ql = f_q.lower()
+    data = data[
+        data["indicador"].str.lower().str.contains(ql)
+        | data[col_instrumento].str.lower().str.contains(ql)
+        | data["norma"].str.lower().str.contains(ql)
+    ]
+
+cantidad_indicadores = len(data)
+avance_prom_filtrado = avg_pct(data)
+responsables = sorted(set(data["responsable_seg"]) - {"", "-"})
+texto_responsable = ", ".join(responsables) if responsables else "Sin dato"
+
+col_tarjeta, col_responsable, col_gauge = st.columns([1, 1, 2])
+
+with col_tarjeta:
     st.markdown(f"""
-    <div class="note-box">
-        <b>Nota:</b> Los siguientes instrumentos de gestión presentan acciones a seguir.
-        Sin embargo, los indicadores y/o metas no se encuentran definidas o en su defecto los indicadores no han sido reportados.
-        <ul style="margin:8px 0 0 0; padding-left:20px;">
-            {lista_html}
-        </ul>
+    <div style="background-color:{DARK}; color:white; padding:20px; border-radius:12px;
+                height:220px; text-align:center; font-family:Arial;
+                box-shadow: 2px 2px 8px rgba(0,0,0,0.2); display:flex; flex-direction:column;
+                justify-content:center;">
+        <div style="font-size:14px; opacity:0.8;">N° de Indicadores</div>
+        <div style="font-size:36px; font-weight:bold;">{cantidad_indicadores}</div>
     </div>
     """, unsafe_allow_html=True)
 
-    st.markdown("---")
+with col_responsable:
+    st.markdown(f"""
+    <div style="background-color:{DARK}; color:white; padding:20px; border-radius:12px;
+                height:220px; text-align:center; font-family:Arial;
+                box-shadow: 2px 2px 8px rgba(0,0,0,0.2); display:flex; flex-direction:column;
+                justify-content:center; overflow:hidden;">
+        <div style="font-size:14px; opacity:0.8;">Responsable del seguimiento</div>
+        <div style="font-size:16px; font-weight:bold; margin-top:8px;">{texto_responsable}</div>
+    </div>
+    """, unsafe_allow_html=True)
 
-    # ---- 4. CRUCE NORMA x ENTIDAD ----
-    st.markdown('<div class="section-title">🔗 Cumplimiento cruzado: Norma × Entidad</div>', unsafe_allow_html=True)
-    st.markdown(
-        '<div class="section-hint">Elige un instrumento para ver qué entidades van cumpliendo, '
-        'o una entidad para ver qué instrumentos va cumpliendo</div>',
-        unsafe_allow_html=True,
-    )
-    cc1, cc2 = st.columns(2)
+with col_gauge:
+    if avance_prom_filtrado is None:
+        st.info("Sin datos de avance disponibles para este filtro.")
+    else:
+        st.plotly_chart(gauge_figure(avance_prom_filtrado, height=220), use_container_width=True)
 
-    instr_by_count = DATA[col_instrumento].value_counts().index.tolist()
-    with cc1:
-        st.markdown("**Por instrumento / norma → avance por entidad**")
-        sel_instr = st.selectbox("Instrumento (norma)", instr_by_count, key="cross_instr")
-        rows = DATA[DATA[col_instrumento] == sel_instr]
-        norma_txt = rows["norma"].iloc[0] if len(rows) else "—"
-        by_ent = (
-            rows.groupby("entidad")
-            .apply(lambda g: pd.Series({"n": len(g), "pct": avg_pct(g)}))
-            .reset_index()
-            .sort_values("pct", ascending=True, na_position="first")
-        )
-        st.caption(f"Norma: **{norma_txt}** · Entidades involucradas: **{len(by_ent)}** · Indicadores: **{len(rows)}**")
-        colors = [STATUS_COLOR[status_of(p)] if pd.notna(p) else "#c9d2dd" for p in by_ent["pct"]]
-        fig_ci = go.Figure(go.Bar(
-            x=by_ent["pct"].fillna(0), y=by_ent["entidad"], orientation="h",
-            marker_color=colors,
-            text=[f"{p:.1f}%" if pd.notna(p) else "N/D" for p in by_ent["pct"]],
-            textposition="outside",
-        ))
-        fig_ci.update_layout(height=320, margin=dict(l=10, r=30, t=10, b=10), xaxis=dict(range=[0, 105]))
-        st.plotly_chart(fig_ci, use_container_width=True)
+st.markdown("---")
 
-    ent_by_count = DATA["entidad"].value_counts().index.tolist()
-    with cc2:
-        st.markdown("**Por entidad → avance por instrumento / norma**")
-        sel_ent = st.selectbox("Entidad responsable", ent_by_count, key="cross_ent")
-        rows2 = DATA[DATA["entidad"] == sel_ent]
-        by_instr = (
-            rows2.groupby(col_instrumento)
-            .apply(lambda g: pd.Series({"n": len(g), "pct": avg_pct(g)}))
-            .reset_index()
-            .sort_values("pct", ascending=True, na_position="first")
-        )
-        st.caption(f"Instrumentos que reporta: **{len(by_instr)}** · Indicadores: **{len(rows2)}**")
-        labels = [i if len(i) <= 40 else i[:40] + "…" for i in by_instr[col_instrumento]]
-        colors2 = [STATUS_COLOR[status_of(p)] if pd.notna(p) else "#c9d2dd" for p in by_instr["pct"]]
-        fig_ce = go.Figure(go.Bar(
-            x=by_instr["pct"].fillna(0), y=labels, orientation="h",
-            marker_color=colors2,
-            text=[f"{p:.1f}%" if pd.notna(p) else "N/D" for p in by_instr["pct"]],
-            textposition="outside",
-            hovertext=by_instr[col_instrumento],
-        ))
-        fig_ce.update_layout(height=320, margin=dict(l=10, r=30, t=10, b=10), xaxis=dict(range=[0, 105]))
-        st.plotly_chart(fig_ce, use_container_width=True)
-
-    st.markdown("---")
-
-    # ---- 5. MATRIZ CRUZADA ENTIDAD x TIPO ----
-    st.markdown('<div class="section-title">🧮 Matriz cruzada: Entidad × Tipo de instrumento</div>', unsafe_allow_html=True)
-    st.markdown(
-        '<div class="section-hint">N° de indicadores que reporta cada entidad, por tipo de instrumento de gestión</div>',
-        unsafe_allow_html=True,
-    )
-    matrix = pd.crosstab(DATA["entidad"], DATA["tipo"])
-    matrix = matrix.reindex(index=ENTIDADES, columns=TIPOS, fill_value=0)
-    matrix["Total"] = matrix.sum(axis=1)
-    total_row = matrix.sum(axis=0)
-    total_row.name = "Total"
-    matrix_display = pd.concat([matrix, total_row.to_frame().T])
-
-    fig_hm = px.imshow(
-        matrix.drop(columns="Total"),
-        text_auto=True,
-        color_continuous_scale=[[0, "#f7f9fb"], [1, TEAL]],
-        aspect="auto",
-    )
-    fig_hm.update_layout(height=280, margin=dict(l=10, r=10, t=10, b=10), coloraxis_showscale=False)
-    st.plotly_chart(fig_hm, use_container_width=True)
-    with st.expander("Ver tabla con totales"):
-        st.dataframe(matrix_display, use_container_width=True)
-
-    st.markdown("---")
-
-    # ============================================================
-    # 6. FILTRO Y DETALLE POR INSTRUMENTO
-    # ============================================================
-    st.markdown('<div class="section-title">🔍 Detalle por Instrumento</div>', unsafe_allow_html=True)
-    st.markdown('<div class="section-hint">Filtra para inspeccionar el avance de un recorte específico</div>',
-                unsafe_allow_html=True)
-
-    f1, f2, f3, f4 = st.columns(4)
-    f_ent = f1.selectbox("Entidad responsable", ["Todas"] + ENTIDADES, key="f_ent")
-    f_ins = f2.selectbox("Instrumento", ["Todos"] + INSTRUMENTOS, key="f_ins")
-    f_tip = f3.selectbox("Tipo de instrumento", ["Todos"] + TIPOS, key="f_tip")
-    f_q = f4.text_input("Buscar indicador", placeholder="ej. economía circular, MYPE, digital…", key="f_q")
-
-    data = medibles_df.copy()
-    if f_ent != "Todas":
-        data = data[data["entidad"] == f_ent]
-    if f_ins != "Todos":
-        data = data[data[col_instrumento] == f_ins]
-    if f_tip != "Todos":
-        data = data[data["tipo"] == f_tip]
-    if f_q:
-        ql = f_q.lower()
-        data = data[
-            data["indicador"].str.lower().str.contains(ql)
-            | data[col_instrumento].str.lower().str.contains(ql)
-            | data["norma"].str.lower().str.contains(ql)
-        ]
-
-    cantidad_indicadores = len(data)
-    avance_prom_filtrado = avg_pct(data)
-    responsables = sorted(set(data["responsable_seg"]) - {"", "-"})
-    texto_responsable = ", ".join(responsables) if responsables else "Sin dato"
-
-    col_tarjeta, col_responsable, col_gauge = st.columns([1, 1, 2])
-
-    with col_tarjeta:
-        st.markdown(f"""
-        <div style="background-color:{DARK}; color:white; padding:20px; border-radius:12px;
-                    height:220px; text-align:center; font-family:Arial;
-                    box-shadow: 2px 2px 8px rgba(0,0,0,0.2); display:flex; flex-direction:column;
-                    justify-content:center;">
-            <div style="font-size:14px; opacity:0.8;">N° de Indicadores</div>
-            <div style="font-size:36px; font-weight:bold;">{cantidad_indicadores}</div>
-        </div>
-        """, unsafe_allow_html=True)
-
-    with col_responsable:
-        st.markdown(f"""
-        <div style="background-color:{DARK}; color:white; padding:20px; border-radius:12px;
-                    height:220px; text-align:center; font-family:Arial;
-                    box-shadow: 2px 2px 8px rgba(0,0,0,0.2); display:flex; flex-direction:column;
-                    justify-content:center; overflow:hidden;">
-            <div style="font-size:14px; opacity:0.8;">Responsable del seguimiento</div>
-            <div style="font-size:16px; font-weight:bold; margin-top:8px;">{texto_responsable}</div>
-        </div>
-        """, unsafe_allow_html=True)
-
-    with col_gauge:
-        if avance_prom_filtrado is None:
-            st.info("Sin datos de avance disponibles para este filtro.")
-        else:
-            st.plotly_chart(gauge_figure(avance_prom_filtrado, height=220), use_container_width=True)
-
-    st.markdown("---")
-
-    # ---- 7. TABLA DE INDICADORES ----
-    st.markdown('<div class="section-title">📋 Tabla de Indicadores</div>', unsafe_allow_html=True)
-    st.caption(f"{len(data)} filas")
-    tabla = data[["entidad", col_instrumento, "norma", "indicador", "meta", "avance", "pct"]].rename(columns={
-        "entidad": "Entidad", col_instrumento: "Instrumento", "norma": "Norma aprobatoria",
-        "indicador": "Indicador", "meta": "Meta", "avance": "Avance", "pct": "% Avance",
-    })
-    st.dataframe(
-        tabla,
-        use_container_width=True,
-        height=480,
-        hide_index=True,
-        column_config={
-            "% Avance": st.column_config.ProgressColumn("% Avance", format="%.1f%%", min_value=0, max_value=100),
-            "Meta": st.column_config.NumberColumn("Meta", format="%.2f"),
-            "Avance": st.column_config.NumberColumn("Avance", format="%.2f"),
-        },
-    )
+# ---- 7. TABLA DE INDICADORES ----
+st.markdown('<div class="section-title">📋 Tabla de Indicadores</div>', unsafe_allow_html=True)
+st.caption(f"{len(data)} filas")
+tabla = data[["entidad", col_instrumento, "norma", "indicador", "meta", "avance", "pct"]].rename(columns={
+    "entidad": "Entidad", col_instrumento: "Instrumento", "norma": "Norma aprobatoria",
+    "indicador": "Indicador", "meta": "Meta", "avance": "Avance", "pct": "% Avance",
+})
+st.dataframe(
+    tabla,
+    use_container_width=True,
+    height=480,
+    hide_index=True,
+    column_config={
+        "% Avance": st.column_config.ProgressColumn("% Avance", format="%.1f%%", min_value=0, max_value=100),
+        "Meta": st.column_config.NumberColumn("Meta", format="%.2f"),
+        "Avance": st.column_config.NumberColumn("Avance", format="%.2f"),
+    },
+)
 
 st.caption("Tablero generado a partir de la base de datos del repositorio.")
 
