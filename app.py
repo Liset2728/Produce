@@ -320,9 +320,9 @@ with c1:
     with st.container(border=True):
         conteo_entidad = medibles_df["entidad"].value_counts().reset_index()
         conteo_entidad.columns = ["entidad", "count"]
-
+ 
         BAR_SEQUENCE = ['#122a44', '#1a3a5c', '#254c73', '#3f8fc7', '#12876f', '#e2963a', '#d24b4b']
-
+ 
         fig_barras = px.bar(conteo_entidad,
                              x='entidad', y='count',
                              text='count', color='entidad',
