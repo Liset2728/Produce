@@ -199,7 +199,7 @@ st.markdown(f"""
   <div class="topbar-inner">
     <div class="eyebrow"><span class="dot"></span>PRODUCE · Seguimiento de indicadores</div>
     <h1>📊 Tablero de Control — Instrumentos PRODUCE</h1>
-    <p>Procesado directamente desde el Excel (hoja BASE), sobre {DATA[col_instrumento].nunique()} instrumentos
+    <p>Procesado con información copilada por la DGPAR, obteniendo {DATA[col_instrumento].nunique()} instrumentos
     de gestión y {len(DATA)} indicadores asociados.</p>
     <div class="topbar-meta">
       <div>Fuente: <b>{NOMBRE_ARCHIVO}</b></div>
