@@ -308,39 +308,49 @@ st.markdown(
 )
 c1, c2 = st.columns([1.35, 1])
 with c1:
-    conteo_entidad = medibles_df["entidad"].value_counts().reset_index()
-    conteo_entidad.columns = ["entidad", "count"]
-    total_indicadores_grafico = len(medibles_df)
-
-    fig_barras = px.bar(conteo_entidad,
-                         x='entidad', y='count',
-                         title='Cantidad de Indicadores por Área Responsable',
-                         labels={'count': 'Cantidad', 'entidad': 'Área Responsable'},
-                         color='entidad', text='count')
-    fig_barras.add_annotation(
-        text=f"Total: {total_indicadores_grafico}",
-        xref="paper", yref="paper", x=1, y=-0.15, showarrow=False,
-        font=dict(size=13, color="gray"), align="right"
-    )
-    fig_barras.update_layout(margin=dict(b=100), height=400, showlegend=False)
-    st.plotly_chart(fig_barras, use_container_width=True)
-
+    with st.container(border=True):
+        st.markdown(
+            '<h3 style="margin:0 0 14px; font-size:14px; color:#5b6b82; '
+            'font-weight:600; font-family:Arial;">Cantidad de indicadores por área responsable</h3>',
+            unsafe_allow_html=True,
+        )
+        conteo_entidad = medibles_df["entidad"].value_counts().reset_index()
+        conteo_entidad.columns = ["entidad", "count"]
+        total_indicadores_grafico = len(medibles_df)
+ 
+        fig_barras = px.bar(conteo_entidad,
+                             x='entidad', y='count',
+                             labels={'count': 'Cantidad', 'entidad': 'Área Responsable'},
+                             color='entidad', text='count')
+        fig_barras.add_annotation(
+            text=f"Total: {total_indicadores_grafico}",
+            xref="paper", yref="paper", x=1, y=-0.15, showarrow=False,
+            font=dict(size=13, color="gray"), align="right"
+        )
+        fig_barras.update_layout(margin=dict(t=10, b=100), height=380, showlegend=False)
+        st.plotly_chart(fig_barras, use_container_width=True)
+ 
 with c2:
-    buckets = {k: 0 for k in STATUS_COLOR}
-    for p in medibles_df["pct"]:
-        s = status_of(p)
-        if s:
-            buckets[s] += 1
-    fig_donut = go.Figure(go.Pie(
-        labels=[STATUS_LABEL[k] for k in buckets],
-        values=list(buckets.values()),
-        marker=dict(colors=[STATUS_COLOR[k] for k in buckets]),
-        hole=0.62,
-    ))
-    fig_donut.update_layout(height=400, margin=dict(l=10, r=10, t=30, b=10),
-                             title="Indicadores por estado de avance", showlegend=True,
-                             legend=dict(orientation="h", yanchor="bottom", y=-0.3))
-    st.plotly_chart(fig_donut, use_container_width=True)
+    with st.container(border=True):
+        st.markdown(
+            '<h3 style="margin:0 0 14px; font-size:14px; color:#5b6b82; '
+            'font-weight:600; font-family:Arial;">Indicadores por estado de avance</h3>',
+            unsafe_allow_html=True,
+        )
+        buckets = {k: 0 for k in STATUS_COLOR}
+        for p in medibles_df["pct"]:
+            s = status_of(p)
+            if s:
+                buckets[s] += 1
+        fig_donut = go.Figure(go.Pie(
+            labels=[STATUS_LABEL[k] for k in buckets],
+            values=list(buckets.values()),
+            marker=dict(colors=[STATUS_COLOR[k] for k in buckets]),
+            hole=0.62,
+        ))
+        fig_donut.update_layout(height=380, margin=dict(l=10, r=10, t=10, b=10), showlegend=True,
+                                 legend=dict(orientation="h", yanchor="bottom", y=-0.3))
+        st.plotly_chart(fig_donut, use_container_width=True)
 
 # --- Nota: instrumentos sin indicador/meta definida ---
 instrumentos_sin_indicador = sorted(
