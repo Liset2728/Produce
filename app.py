@@ -41,6 +41,31 @@ STATUS_LABEL = {
 # ============================================================
 st.markdown(f"""
 <style>
+.topbar {{
+    background: linear-gradient(135deg, {NAVY} 0%, #122a44 55%, #1a3a5c 100%);
+    color:#fff; padding:34px 40px; border-radius:16px; margin-bottom:18px;
+    position:relative; overflow:hidden;
+}}
+.topbar::before {{
+    content:""; position:absolute; inset:0;
+    background-image:
+        radial-gradient(circle at 85% -10%, rgba(31,174,143,.35), transparent 45%),
+        repeating-linear-gradient(90deg, rgba(255,255,255,.035) 0 1px, transparent 1px 64px);
+    pointer-events:none;
+}}
+.topbar-inner {{ position:relative; }}
+.eyebrow {{
+    display:inline-flex; align-items:center; gap:8px; font-size:12.5px; letter-spacing:.09em;
+    text-transform:uppercase; color:#9fd9c9; font-weight:600; margin-bottom:12px; font-family:Arial;
+}}
+.eyebrow .dot {{ width:7px; height:7px; border-radius:50%; background:{TEAL}; box-shadow:0 0 0 4px rgba(31,174,143,.25); }}
+.topbar h1 {{ font-size:32px; font-weight:800; margin:0 0 8px; letter-spacing:-.01em; font-family:Arial; }}
+.topbar p {{ margin:0; color:#b9c6d8; font-size:14.5px; max-width:640px; line-height:1.5; font-family:Arial; }}
+.topbar-meta {{
+    display:flex; gap:22px; margin-top:18px; flex-wrap:wrap;
+    font-size:12.5px; color:#8fa3bb; font-family:Arial;
+}}
+.topbar-meta b {{ color:#e7edf5; font-weight:600; }}
 .note-box {{
     background:#e8e8e8; border-radius:12px; border-left:4px solid {AMBER};
     padding:14px 20px; font-family:Arial; font-size:12.5px; color:#333; line-height:1.55;
@@ -83,24 +108,6 @@ st.markdown(f"""
 #
 #if not verificar_password():
 #    st.stop()
-
-# ============================================================
-# ENCABEZADO
-# ============================================================
-st.markdown(f"""
-<div class="topbar">
-  <div class="topbar-inner">
-    <div class="eyebrow"><span class="dot"></span>PRODUCE · Seguimiento de indicadores</div>
-    <h1>📊 Tablero de Control — Instrumentos PRODUCE</h1>
-    <p>Procesado directamente desde el Excel (hoja BASE), sobre {DATA[col_instrumento].nunique()} instrumentos
-    de gestión y {len(DATA)} indicadores asociados.</p>
-    <div class="topbar-meta">
-      <div>Fuente: <b>{NOMBRE_ARCHIVO}</b></div>
-      <div>Entidades responsables: <b>{len(ENTIDADES)}</b></div>
-    </div>
-  </div>
-</div>
-""", unsafe_allow_html=True)
 
 # ============================================================
 # 1. CARGA DE DATOS (directa, sin carga por el usuario)
@@ -183,6 +190,24 @@ col_instrumento = "instrumento"
 ENTIDADES = sorted(e for e in DATA["entidad"].unique() if e)
 TIPOS = sorted(t for t in DATA["tipo"].unique() if t)
 INSTRUMENTOS = sorted(i for i in DATA["instrumento"].unique() if i)
+
+# ============================================================
+# ENCABEZADO
+# ============================================================
+st.markdown(f"""
+<div class="topbar">
+  <div class="topbar-inner">
+    <div class="eyebrow"><span class="dot"></span>PRODUCE · Seguimiento de indicadores</div>
+    <h1>📊 Tablero de Control — Instrumentos PRODUCE</h1>
+    <p>Procesado directamente desde el Excel (hoja BASE), sobre {DATA[col_instrumento].nunique()} instrumentos
+    de gestión y {len(DATA)} indicadores asociados.</p>
+    <div class="topbar-meta">
+      <div>Fuente: <b>{NOMBRE_ARCHIVO}</b></div>
+      <div>Entidades responsables: <b>{len(ENTIDADES)}</b></div>
+    </div>
+  </div>
+</div>
+""", unsafe_allow_html=True)
 
 
 # ============================================================
@@ -669,4 +694,4 @@ st.caption("Tablero generado a partir de la base de datos del repositorio.")
 #    data=buffer.getvalue(),
 #    file_name="Instrumentos_bi_actualizado.xlsx",
 #    mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-#)
+#)#)
