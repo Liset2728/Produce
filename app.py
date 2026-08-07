@@ -318,11 +318,14 @@ with c1:
         conteo_entidad.columns = ["entidad", "count"]
         total_indicadores_grafico = len(medibles_df)
 
+        BAR_SEQUENCE = ['#122a44', '#1a3a5c', '#254c73', '#3f8fc7', '#12876f', '#e2963a', '#d24b4b']
+
         fig_barras = px.bar(conteo_entidad,
                              x='entidad', y='count',
                              labels={'count': 'Cantidad', 'entidad': 'Área Responsable'},
-                             text='count',
-                             color_discrete_sequence=[DARK])
+                             text='count', color='entidad',
+                             color_discrete_sequence=BAR_SEQUENCE)
+        fig_barras.update_xaxes(categoryorder='total descending')
         fig_barras.add_annotation(
             text=f"Total: {total_indicadores_grafico}",
             xref="paper", yref="paper", x=1, y=-0.15, showarrow=False,
