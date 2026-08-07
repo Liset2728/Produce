@@ -318,26 +318,25 @@ st.markdown(
 )
 c1, c2 = st.columns([1.35, 1])
 with c1:
-    with st.container(border=True):
-        conteo_entidad = medibles_df["entidad"].value_counts().reset_index()
-        conteo_entidad.columns = ["entidad", "count"]
+    conteo_entidad = medibles_df["entidad"].value_counts().reset_index()
+    conteo_entidad.columns = ["entidad", "count"]
 
-        BAR_SEQUENCE = ['#122a44', '#1a3a5c', '#254c73', '#3f8fc7', '#12876f', '#e2963a', '#d24b4b']
+    BAR_SEQUENCE = ['#122a44', '#1a3a5c', '#254c73', '#3f8fc7', '#12876f', '#e2963a', '#d24b4b']
 
-        fig_barras = px.bar(conteo_entidad,
-                             x='entidad', y='count',
-                             text='count', color='entidad',
-                             color_discrete_sequence=BAR_SEQUENCE,
-                             title='Cantidad de indicadores por área responsable')
-        fig_barras.update_xaxes(categoryorder='total descending', title=None)
-        fig_barras.update_yaxes(title=None)
-        fig_barras.update_traces(marker_cornerradius=8)
-        fig_barras.update_layout(
-            title_font=dict(size=14, color='#5b6b82', family='Arial'),
-            title_x=0, margin=dict(t=50, b=100, l=10, r=10), height=380, showlegend=False,
-            paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)',
-        )
-        st.plotly_chart(fig_barras, use_container_width=True)
+    fig_barras = px.bar(conteo_entidad,
+                         x='entidad', y='count',
+                         text='count', color='entidad',
+                         color_discrete_sequence=BAR_SEQUENCE,
+                         title='Cantidad de indicadores por área responsable')
+    fig_barras.update_xaxes(categoryorder='total descending', title=None)
+    fig_barras.update_yaxes(title=None)
+    fig_barras.update_traces(marker_cornerradius=8)
+    fig_barras.update_layout(
+        title_font=dict(size=14, color='#5b6b82', family='Arial'),
+        title_x=0, margin=dict(t=50, b=100, l=10, r=10), height=380, showlegend=False,
+        paper_bgcolor='white', plot_bgcolor='white',
+    )
+    st.plotly_chart(fig_barras, use_container_width=True)
 
 with c2:
     with st.container(border=True):
