@@ -477,8 +477,11 @@ if f_q:
  
 cantidad_indicadores = len(data)
 avance_prom_filtrado = avg_pct(data)
-responsables = sorted(set(data["responsable_seg"]) - {"", "-"})
-texto_responsable = ", ".join(responsables) if responsables else "Sin dato"
+if f_ins == "Todos":
+    texto_responsable = "-"
+else:
+    responsables = sorted(set(data["responsable_seg"]) - {"", "-"})
+    texto_responsable = ", ".join(responsables) if responsables else "Sin dato"
  
 col_tarjeta, col_responsable, col_avance = st.columns(3)
  
