@@ -68,7 +68,7 @@ st.markdown(f"""
 }}
 .topbar-meta b {{ color:#e7edf5; font-weight:600; }}
 .note-box {{
-    background:#e8e8e8; border-radius:12px; border-left:4px solid {AMBER};
+    background:#fff8dc; border-radius:12px; border-left:4px solid {AMBER};
     padding:14px 20px; font-family:Arial; font-size:12.5px; color:#333; line-height:1.55;
 }}
 .section-title {{ font-size:19px; font-weight:700; color:{DARK}; margin: 10px 0 2px; font-family:Arial; }}
