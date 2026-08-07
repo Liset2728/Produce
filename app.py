@@ -331,8 +331,8 @@ with c2:
         labels=[f"{STATUS_LABEL[k]} · {buckets[k]}" for k in buckets],
         values=list(buckets.values()),
         marker=dict(colors=[STATUS_COLOR[k] for k in buckets]),
-        hole=0.62,
-        pull=0.03,
+        hole=0.60,
+        pull=0.015,
         textinfo='none',
     ))
     fig_donut.update_layout(
