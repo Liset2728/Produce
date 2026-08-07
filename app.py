@@ -4,6 +4,7 @@ import plotly.express as px
 import plotly.graph_objects as go
 import streamlit as st
 
+
 # ============================================================
 # CONFIGURACIÓN DE LA PÁGINA
 # ============================================================
@@ -321,11 +322,6 @@ with c1:
     st.plotly_chart(fig_barras, use_container_width=True)
 
 with c2:
-    st.markdown(
-        '<h3 style="margin:0 0 14px; font-size:14px; color:#5b6b82; '
-        'font-weight:600; font-family:Arial;">Indicadores por estado de avance</h3>',
-        unsafe_allow_html=True,
-    )
     buckets = {k: 0 for k in STATUS_COLOR}
     for p in medibles_df["pct"]:
         s = status_of(p)
@@ -336,11 +332,16 @@ with c2:
         values=list(buckets.values()),
         marker=dict(colors=[STATUS_COLOR[k] for k in buckets]),
         hole=0.62,
+        pull=0.05,
         textinfo='none',
     ))
-    fig_donut.update_layout(height=380, margin=dict(l=10, r=10, t=10, b=10), showlegend=True,
-                             legend=dict(orientation="h", yanchor="bottom", y=-0.3),
-                             paper_bgcolor='white', plot_bgcolor='white')
+    fig_donut.update_layout(
+        title='Indicadores por estado de avance',
+        title_font=dict(size=14, color='#5b6b82', family='Arial'),
+        title_x=0,
+        height=380, margin=dict(l=10, r=10, t=50, b=10), showlegend=True,
+        legend=dict(orientation="h", yanchor="bottom", y=-0.3),
+        paper_bgcolor='white', plot_bgcolor='white')
     st.plotly_chart(fig_donut, use_container_width=True)
 
 # --- Nota: instrumentos sin indicador/meta definida ---
