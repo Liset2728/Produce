@@ -333,7 +333,7 @@ with c1:
         fig_barras.update_traces(marker_cornerradius=8)
         fig_barras.update_layout(
             title_font=dict(size=14, color='#5b6b82', family='Arial'),
-            title_x=0.5, margin=dict(t=60, b=100, l=10, r=10), height=380, showlegend=False,
+            title_x=1, margin=dict(t=60, b=100, l=10, r=10), height=380, showlegend=False,
             paper_bgcolor='white', plot_bgcolor='white',
         )
         st.plotly_chart(fig_barras, use_container_width=True)
