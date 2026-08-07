@@ -322,7 +322,7 @@ with c1:
 
         fig_barras = px.bar(conteo_entidad,
                              x='entidad', y='count',
-                             labels={'count': 'Cantidad', 'entidad': 'Área Responsable'},
+                             #labels={'count': 'Cantidad', 'entidad': 'Área Responsable'},
                              text='count', color='entidad',
                              color_discrete_sequence=BAR_SEQUENCE)
         fig_barras.update_xaxes(categoryorder='total descending')
