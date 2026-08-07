@@ -312,11 +312,6 @@ st.markdown(
 c1, c2 = st.columns([1.35, 1])
 with c1:
     with st.container(border=True):
-        st.markdown(
-            '<h3 style="margin:0 0 14px; font-size:14px; color:#5b6b82; '
-            'font-weight:600; font-family:Arial;">Cantidad de indicadores por área responsable</h3>',
-            unsafe_allow_html=True,
-        )
         conteo_entidad = medibles_df["entidad"].value_counts().reset_index()
         conteo_entidad.columns = ["entidad", "count"]
 
@@ -325,11 +320,16 @@ with c1:
         fig_barras = px.bar(conteo_entidad,
                              x='entidad', y='count',
                              text='count', color='entidad',
-                             color_discrete_sequence=BAR_SEQUENCE)
+                             color_discrete_sequence=BAR_SEQUENCE,
+                             title='Cantidad de indicadores por área responsable')
         fig_barras.update_xaxes(categoryorder='total descending', title=None)
         fig_barras.update_yaxes(title=None)
         fig_barras.update_traces(marker_cornerradius=8)
-        fig_barras.update_layout(margin=dict(t=10, b=100), height=380, showlegend=False)
+        fig_barras.update_layout(
+            title_font=dict(size=14, color='#5b6b82', family='Arial'),
+            title_x=0, margin=dict(t=50, b=100), height=380, showlegend=False,
+            paper_bgcolor='white', plot_bgcolor='white',
+        )
         st.plotly_chart(fig_barras, use_container_width=True)
 
 with c2:
