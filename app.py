@@ -14,18 +14,18 @@ st.set_page_config(
 )
 
 # ============================================================
-# PALETA DE COLORES (base app_mod)
+# PALETA DE COLORES (gama neutra)
 # ============================================================
-NAVY = "#1a2634"
-DARK = "#2c3e50"
-TEAL = "#16a085"
-SLATE = "#34495e"
+NAVY = "#27272a"     # antes navy oscuro -> gris carbón (header)
+DARK = "#3f3f46"      # antes navy medio -> gris oscuro (texto/valores)
+TEAL = "#71717a"      # antes teal -> gris medio (acento "Medibles")
+SLATE = "#a1a1aa"     # antes slate -> gris claro (acento "% Avance")
 RED = "#e74c3c"
 AMBER = "#f1c40f"
 BLUE = "#3498db"
 GREEN = "#2ecc71"
-INK_FAINT = "#8a97a8"
-LINE = "#dde3ea"
+INK_FAINT = "#9b9ba3"
+LINE = "#e4e4e7"
 
 STATUS_COLOR = {"crit": RED, "bajo": AMBER, "medio": BLUE, "alto": GREEN}
 STATUS_LABEL = {
@@ -41,23 +41,23 @@ STATUS_LABEL = {
 st.markdown(f"""
 <style>
 .topbar {{
-    background: linear-gradient(135deg, {NAVY} 0%, #122a44 55%, #1a3a5c 100%);
+    background: linear-gradient(135deg, {NAVY} 0%, #3f3f46 55%, #52525b 100%);
     color:#fff; padding:34px 40px; border-radius:16px; margin-bottom:18px;
     position:relative; overflow:hidden;
 }}
 .topbar::before {{
     content:""; position:absolute; inset:0;
     background-image:
-        radial-gradient(circle at 85% -10%, rgba(31,174,143,.35), transparent 45%),
+        radial-gradient(circle at 85% -10%, rgba(161,161,170,.30), transparent 45%),
         repeating-linear-gradient(90deg, rgba(255,255,255,.035) 0 1px, transparent 1px 64px);
     pointer-events:none;
 }}
 .topbar-inner {{ position:relative; }}
 .eyebrow {{
     display:inline-flex; align-items:center; gap:8px; font-size:12.5px; letter-spacing:.09em;
-    text-transform:uppercase; color:#9fd9c9; font-weight:600; margin-bottom:12px; font-family:Arial;
+    text-transform:uppercase; color:#d4d4d8; font-weight:600; margin-bottom:12px; font-family:Arial;
 }}
-.eyebrow .dot {{ width:7px; height:7px; border-radius:50%; background:{TEAL}; box-shadow:0 0 0 4px rgba(31,174,143,.25); }}
+.eyebrow .dot {{ width:7px; height:7px; border-radius:50%; background:{TEAL}; box-shadow:0 0 0 4px rgba(161,161,170,.25); }}
 .topbar h1 {{ font-size:32px; font-weight:800; margin:0 0 8px; letter-spacing:-.01em; font-family:Arial; }}
 .topbar p {{ margin:0; color:#b9c6d8; font-size:14.5px; max-width:640px; line-height:1.5; font-family:Arial; }}
 .topbar-meta {{
@@ -317,11 +317,12 @@ with c1:
         conteo_entidad = medibles_df["entidad"].value_counts().reset_index()
         conteo_entidad.columns = ["entidad", "count"]
         total_indicadores_grafico = len(medibles_df)
- 
+
         fig_barras = px.bar(conteo_entidad,
                              x='entidad', y='count',
                              labels={'count': 'Cantidad', 'entidad': 'Área Responsable'},
-                             color='entidad', text='count')
+                             text='count',
+                             color_discrete_sequence=[DARK])
         fig_barras.add_annotation(
             text=f"Total: {total_indicadores_grafico}",
             xref="paper", yref="paper", x=1, y=-0.15, showarrow=False,
@@ -329,7 +330,7 @@ with c1:
         )
         fig_barras.update_layout(margin=dict(t=10, b=100), height=380, showlegend=False)
         st.plotly_chart(fig_barras, use_container_width=True)
- 
+
 with c2:
     with st.container(border=True):
         st.markdown(
