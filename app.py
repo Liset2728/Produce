@@ -449,13 +449,17 @@ st.markdown("---")
 st.markdown('<div class="section-title">🔍 Detalle por Instrumento</div>', unsafe_allow_html=True)
 st.markdown('<div class="section-hint">Filtra para inspeccionar el avance de un recorte específico</div>',
             unsafe_allow_html=True)
-
+ 
+ENTIDADES_MED = sorted(e for e in medibles_df["entidad"].unique() if e)
+TIPOS_MED = sorted(t for t in medibles_df["tipo"].unique() if t)
+INSTRUMENTOS_MED = sorted(i for i in medibles_df[col_instrumento].unique() if i)
+ 
 f1, f2, f3, f4 = st.columns(4)
-f_ent = f1.selectbox("Entidad responsable", ["Todas"] + ENTIDADES, key="f_ent")
-f_ins = f2.selectbox("Instrumento", ["Todos"] + INSTRUMENTOS, key="f_ins")
-f_tip = f3.selectbox("Tipo de instrumento", ["Todos"] + TIPOS, key="f_tip")
+f_ent = f1.selectbox("Entidad responsable", ["Todas"] + ENTIDADES_MED, key="f_ent")
+f_ins = f2.selectbox("Instrumento", ["Todos"] + INSTRUMENTOS_MED, key="f_ins")
+f_tip = f3.selectbox("Tipo de instrumento", ["Todos"] + TIPOS_MED, key="f_tip")
 f_q = f4.text_input("Buscar indicador", placeholder="ej. economía circular, MYPE, digital…", key="f_q")
-
+ 
 data = medibles_df.copy()
 if f_ent != "Todas":
     data = data[data["entidad"] == f_ent]
@@ -470,14 +474,14 @@ if f_q:
         | data[col_instrumento].str.lower().str.contains(ql)
         | data["norma"].str.lower().str.contains(ql)
     ]
-
+ 
 cantidad_indicadores = len(data)
 avance_prom_filtrado = avg_pct(data)
 responsables = sorted(set(data["responsable_seg"]) - {"", "-"})
 texto_responsable = ", ".join(responsables) if responsables else "Sin dato"
-
+ 
 col_tarjeta, col_responsable, col_gauge = st.columns([1, 1, 2])
-
+ 
 with col_tarjeta:
     st.markdown(f"""
     <div style="background-color:{DARK}; color:white; padding:20px; border-radius:12px;
@@ -488,7 +492,7 @@ with col_tarjeta:
         <div style="font-size:36px; font-weight:bold;">{cantidad_indicadores}</div>
     </div>
     """, unsafe_allow_html=True)
-
+ 
 with col_responsable:
     st.markdown(f"""
     <div style="background-color:{DARK}; color:white; padding:20px; border-radius:12px;
@@ -499,15 +503,15 @@ with col_responsable:
         <div style="font-size:16px; font-weight:bold; margin-top:8px;">{texto_responsable}</div>
     </div>
     """, unsafe_allow_html=True)
-
+ 
 with col_gauge:
     if avance_prom_filtrado is None:
         st.info("Sin datos de avance disponibles para este filtro.")
     else:
         st.plotly_chart(gauge_figure(avance_prom_filtrado, height=220), use_container_width=True)
-
+ 
 st.markdown("---")
-
+ 
 # ---- 7. TABLA DE INDICADORES ----
 st.markdown('<div class="section-title">📋 Tabla de Indicadores</div>', unsafe_allow_html=True)
 st.caption(f"{len(data)} filas")
@@ -526,7 +530,7 @@ st.dataframe(
         "Avance": st.column_config.NumberColumn("Avance", format="%.2f"),
     },
 )
-
+ 
 st.caption("Tablero generado a partir de la base de datos del repositorio.")
 
 # ============================================================
