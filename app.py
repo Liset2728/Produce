@@ -280,24 +280,28 @@ def gauge_figure(value, height=220):
 # ============================================================
 # 2. KPIs GENERALES
 # ============================================================
-total_general = DATA[col_instrumento].nunique()
+otal_general = DATA[col_instrumento].nunique()
 indicadores_general = len(DATA)
 medibles_df = DATA[DATA["medible"]]
 indicadores_medibles = len(medibles_df)
 avance_general = avg_pct(DATA)
-
+ 
 k1, k2, k3, k4 = st.columns(4)
 with k1:
-    tarjeta_kpi("Total Instrumentos", total_general)
+    tarjeta_kpi("Total Instrumentos", total_general,
+                "Hojas de ruta, estrategias, planes y lineamientos")
 with k2:
-    tarjeta_kpi("Total Indicadores", indicadores_general)
+    tarjeta_kpi("Total Indicadores", indicadores_general,
+                "Filas de seguimiento en la base")
 with k3:
-    tarjeta_kpi("Indicadores Medibles", indicadores_medibles, color=TEAL)
+    tarjeta_kpi("Indicadores Medibles", indicadores_medibles,
+                "con meta numérica definida", clase="teal")
 with k4:
-    tarjeta_kpi("% Avance General", f"{avance_general:.1f}%" if avance_general is not None else "—", color=SLATE)
-
+    tarjeta_kpi("% Avance General", f"{avance_general:.1f}%" if avance_general is not None else "—",
+                "promedio de avance sobre indicadores medibles (tope 100%)", clase="amber")
+ 
 st.markdown("<br>", unsafe_allow_html=True)
-
+ 
 tab_resumen, tab_subtotales = st.tabs(["📊 Resumen general", "🗂️ Subtotales por instrumento y dependencia"])
 
 # ============================================================
