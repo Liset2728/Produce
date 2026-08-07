@@ -40,6 +40,9 @@ STATUS_LABEL = {
 # ============================================================
 st.markdown(f"""
 <style>
+.stApp {{
+    background-color: #eceef1;
+}}
 .topbar {{
     background: linear-gradient(135deg, {NAVY} 0%, #3f3f46 55%, #52525b 100%);
     color:#fff; padding:34px 40px; border-radius:16px; margin-bottom:18px;
@@ -342,10 +345,11 @@ with c2:
             if s:
                 buckets[s] += 1
         fig_donut = go.Figure(go.Pie(
-            labels=[STATUS_LABEL[k] for k in buckets],
+            labels=[f"{STATUS_LABEL[k]} · {buckets[k]}" for k in buckets],
             values=list(buckets.values()),
             marker=dict(colors=[STATUS_COLOR[k] for k in buckets]),
             hole=0.62,
+            textinfo='none',
         ))
         fig_donut.update_layout(height=380, margin=dict(l=10, r=10, t=10, b=10), showlegend=True,
                                  legend=dict(orientation="h", yanchor="bottom", y=-0.3))
