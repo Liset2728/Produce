@@ -480,35 +480,22 @@ avance_prom_filtrado = avg_pct(data)
 responsables = sorted(set(data["responsable_seg"]) - {"", "-"})
 texto_responsable = ", ".join(responsables) if responsables else "Sin dato"
  
-col_tarjeta, col_responsable, col_gauge = st.columns([1, 1, 2])
+col_tarjeta, col_responsable, col_avance = st.columns(3)
  
 with col_tarjeta:
-    st.markdown(f"""
-    <div style="background-color:{DARK}; color:white; padding:20px; border-radius:12px;
-                height:220px; text-align:center; font-family:Arial;
-                box-shadow: 2px 2px 8px rgba(0,0,0,0.2); display:flex; flex-direction:column;
-                justify-content:center;">
-        <div style="font-size:14px; opacity:0.8;">N° de Indicadores</div>
-        <div style="font-size:36px; font-weight:bold;">{cantidad_indicadores}</div>
-    </div>
-    """, unsafe_allow_html=True)
+    tarjeta_kpi("N° de Indicadores", cantidad_indicadores,
+                "Indicadores medibles bajo el filtro actual")
  
 with col_responsable:
-    st.markdown(f"""
-    <div style="background-color:{DARK}; color:white; padding:20px; border-radius:12px;
-                height:220px; text-align:center; font-family:Arial;
-                box-shadow: 2px 2px 8px rgba(0,0,0,0.2); display:flex; flex-direction:column;
-                justify-content:center; overflow:hidden;">
-        <div style="font-size:14px; opacity:0.8;">Responsable del seguimiento</div>
-        <div style="font-size:16px; font-weight:bold; margin-top:8px;">{texto_responsable}</div>
-    </div>
-    """, unsafe_allow_html=True)
+    tarjeta_kpi("Responsable del seguimiento", texto_responsable,
+                "Entidad(es) a cargo de reportar avance", clase="teal")
  
-with col_gauge:
-    if avance_prom_filtrado is None:
-        st.info("Sin datos de avance disponibles para este filtro.")
-    else:
-        st.plotly_chart(gauge_figure(avance_prom_filtrado, height=220), use_container_width=True)
+with col_avance:
+    tarjeta_kpi("% Avance Promedio",
+                f"{avance_prom_filtrado:.1f}%" if avance_prom_filtrado is not None else "—",
+                "Sin datos de avance disponibles" if avance_prom_filtrado is None
+                else "promedio sobre el recorte filtrado (tope 100%)",
+                clase="amber")
  
 st.markdown("---")
  
