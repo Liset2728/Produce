@@ -204,6 +204,7 @@ st.markdown(f"""
     <div class="topbar-meta">
       <div>Fuente: <b>{NOMBRE_ARCHIVO}</b></div>
       <div>Entidades responsables: <b>{len(ENTIDADES)}</b></div>
+      <div>Corte inf.: <b>Mayo 2026</b></div>
     </div>
   </div>
 </div>
